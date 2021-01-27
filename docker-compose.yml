@@ -14,42 +14,6 @@ services:
     volumes:
       - c://xampp3//htdocs//laravel//laravel-ora:/var/www/html
     restart: always
-    depends_on:
-      - db
-    networks:
-      - app-network
-
-  myadmin:
-    image: phpmyadmin/phpmyadmin
-    container_name: phpmyadmin
-    tty: true
-    ports:
-      - 8888:80
-    environment:
-      - PMA_HOST=mysql
-    restart: always
-    links:
-      - db
-    depends_on:
-      - db
-    networks:
-      - app-network
-
-  db:
-    image: mysql:5.7
-    container_name: mysql
-    restart: always
-    tty: true
-    ports: 
-      - "33060:3306"
-    environment:
-      MYSQL_DATABASE: 'laraapp_db'
-      MYSQL_ALLOW_EMPTY_PASSWORD: 1
-      MYSQL_ROOT_PASSWORD: "root"
-      MYSQL_USER: "laravel"
-      MYSQL_PASSWORD: "laravel"
-    volumes:
-      - ./db:/var/lib/mysql
     networks:
       - app-network
 
