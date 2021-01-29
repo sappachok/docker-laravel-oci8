@@ -3,8 +3,8 @@ services:
   app:
     build:
       context: .
-      dockerfile: ./Dockerfile
-    image: 'laravelapp'
+      # dockerfile: ./Dockerfile
+    image: sappachok/docker-laravel-oci8
     container_name: 'laravelapp'
     tty: true
     command:  php artisan serve --host=0.0.0.0 --port=9000

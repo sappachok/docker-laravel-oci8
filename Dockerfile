@@ -1,4 +1,4 @@
-FROM php:7.4.1-apache
+FROM php:7.4.1-fpm
 
 USER root
 
@@ -49,11 +49,13 @@ RUN apt-get install build-essential libaio1
 RUN pecl channel-update pecl.php.net
 
 RUN echo 'instantclient,/usr/local/instantclient' | pecl install oci8-2.2.0
-RUN echo "extension=oci8.so" > /usr/local/etc/php/conf.d/php-oci8.ini
 
 RUN docker-php-ext-enable oci8 \
        && docker-php-ext-configure pdo_oci --with-pdo-oci=instantclient,/usr/local/instantclient \
        && docker-php-ext-install pdo_oci 
+
+RUN echo "extension=oci8.so" > /usr/local/etc/php/conf.d/php-oci8.ini
+# RUN echo "extension=pdo_oci.so" > /usr/local/etc/php/conf.d/pdo_oci.ini
 
 RUN ldd /usr/local/lib/php/extensions/no-debug-non-zts-20190902/oci8.so
 RUN php -m | grep 'oci8'
