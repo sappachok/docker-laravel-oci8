@@ -62,9 +62,9 @@ RUN php -m | grep 'oci8'
 
 CMD ["/usr/sbin/apache2ctl", "-D", "FOREGROUND"]
 
-RUN php artisan serve --host=0.0.0.0 --port=9000
+# RUN php artisan serve --host=0.0.0.0 --port=9000
 
-RUN curl "http://0.0.0.0:9000"
+# RUN curl "http://0.0.0.0:9000"
 
 EXPOSE 80
 EXPOSE 9000
