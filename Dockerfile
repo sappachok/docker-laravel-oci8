@@ -28,46 +28,44 @@ RUN chown -R www-data:www-data /var/www/html \
     && a2enmod rewrite
 
 # Oracle instantclient
-ADD ./instantclient/18.5.0.0.0/instantclient-basic-linux.x64-18.5.0.0.0dbru.zip /tmp/
-ADD ./instantclient/18.5.0.0.0/instantclient-sdk-linux.x64-18.5.0.0.0dbru.zip /tmp/
-ADD ./instantclient/18.5.0.0.0/instantclient-sqlplus-linux.x64-18.5.0.0.0dbru.zip /tmp/
+ADD ./instantclient/12.2.0.1.0/instantclient-basic-linux.x64-12.2.0.1.0.zip /tmp/
+ADD ./instantclient/12.2.0.1.0/instantclient-sdk-linux.x64-12.2.0.1.0.zip /tmp/
+ADD ./instantclient/12.2.0.1.0/instantclient-sqlplus-linux.x64-12.2.0.1.0.zip /tmp/
 
-RUN unzip /tmp/instantclient-basic-linux.x64-18.5.0.0.0dbru.zip -d /usr/local/
-RUN unzip /tmp/instantclient-sdk-linux.x64-18.5.0.0.0dbru.zip -d /usr/local/
-RUN unzip /tmp/instantclient-sqlplus-linux.x64-18.5.0.0.0dbru.zip -d /usr/local/
+RUN unzip /tmp/instantclient-basic-linux.x64-12.2.0.1.0.zip -d /usr/local/
+RUN unzip /tmp/instantclient-sdk-linux.x64-12.2.0.1.0.zip -d /usr/local/
+RUN unzip /tmp/instantclient-sqlplus-linux.x64-12.2.0.1.0.zip -d /usr/local/
 
-ENV LD_LIBRARY_PATH /usr/local/instantclient_18_5/
-
-RUN ln -s /usr/local/instantclient_18_5 /usr/local/instantclient
+RUN ln -s /usr/local/instantclient_12_2 /usr/local/instantclient
+RUN ln -s /usr/local/instantclient/libclntsh.so.12.1 /usr/local/instantclient/libclntsh.so
 RUN ln -s /usr/local/instantclient/sqlplus /usr/bin/sqlplus
 
-ENV LD_LIBRARY_PATH /usr/local/instantclient/
 RUN echo 'export LD_LIBRARY_PATH="/usr/local/instantclient"' >> /root/.bashrc
 RUN echo 'umask 002' >> /root/.bashrc
 
-RUN apt-get install build-essential libaio1
-RUN pecl channel-update pecl.php.net
+RUN echo 'export LD_LIBRARY_PATH="/usr/local/instantclient"'
 
-RUN echo 'instantclient,/usr/local/instantclient' | pecl install oci8-2.2.0
-
-RUN docker-php-ext-enable oci8 \
-       && docker-php-ext-configure pdo_oci --with-pdo-oci=instantclient,/usr/local/instantclient \
-       && docker-php-ext-install pdo_oci 
-
+RUN echo 'instantclient,/usr/local/instantclient' | pecl install oci8-2.1.8
 RUN echo "extension=oci8.so" > /usr/local/etc/php/conf.d/php-oci8.ini
-# RUN echo "extension=pdo_oci.so" > /usr/local/etc/php/conf.d/pdo_oci.ini
+
+RUN apt-get install nano -y
+
+RUN echo "export LD_LIBRARY_PATH=/usr/local/instantclient" >> /etc/apache2/envvars
+RUN echo "export ORACLE_HOME=/usr/local/instantclient" >> /etc/apache2/envvars
+RUN echo "LD_LIBRARY_PATH=/usr/local/instantclient:\$LD_LIBRARY_PATH" >> /etc/environment
+
+RUN echo "<?php echo phpinfo(); ?>" > /var/www/html/phpinfo.php
+RUN echo "<?php echo 'Client Version: ' . oci_client_version(); ?>" > /var/www/html/ocitest.php
+
+RUN echo "service apache2 restart"
 
 RUN ldd /usr/local/lib/php/extensions/no-debug-non-zts-20190902/oci8.so
 RUN php -m | grep 'oci8'
 
+RUN echo "curl http://localhost/phpinfo.php"
+RUN echo "curl http://localhost/ocitest.php"
+
 CMD ["/usr/sbin/apache2ctl", "-D", "FOREGROUND"]
-
-#CMD ["php", "artisan", "serve", "--host=0.0.0.0", "--port=9000"]
-
-#CMD ["curl", "http://0.0.0.0:9000"]
-
-# RUN php artisan serve --host=0.0.0.0 --port=9000
-# RUN curl "http://0.0.0.0:9000"
 
 EXPOSE 80
 EXPOSE 9000
