@@ -59,8 +59,8 @@ RUN echo "<?php echo 'Client Version: ' . oci_client_version(); ?>" > /var/www/h
 
 RUN echo "service apache2 restart"
 
-RUN ldd /usr/local/lib/php/extensions/no-debug-non-zts-20190902/oci8.so
-RUN php -m | grep 'oci8'
+# RUN ldd /usr/local/lib/php/extensions/no-debug-non-zts-20190902/oci8.so
+# RUN php -m | grep 'oci8'
 
 RUN echo "curl http://localhost/phpinfo.php"
 RUN echo "curl http://localhost/ocitest.php"
