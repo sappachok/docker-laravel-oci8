@@ -64,6 +64,8 @@ CMD ["/usr/sbin/apache2ctl", "-D", "FOREGROUND"]
 
 CMD ["php", "artisan", "serve", "--host=0.0.0.0", "--port=9000"]
 
+CMD ["curl", "http://0.0.0.0:9000"]
+
 # RUN php artisan serve --host=0.0.0.0 --port=9000
 # RUN curl "http://0.0.0.0:9000"
 
