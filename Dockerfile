@@ -13,6 +13,7 @@ RUN apt-get update && apt-get install -y \
         zip \
         curl \
         unzip \
+        libaio1 \
     && docker-php-ext-configure gd \
     && docker-php-ext-install -j$(nproc) gd \
     && docker-php-ext-install pdo_mysql \
@@ -37,25 +38,29 @@ RUN unzip /tmp/instantclient-sdk-linux.x64-12.2.0.1.0.zip -d /usr/local/
 RUN unzip /tmp/instantclient-sqlplus-linux.x64-12.2.0.1.0.zip -d /usr/local/
 
 RUN ln -s /usr/local/instantclient_12_2 /usr/local/instantclient
-RUN ln -s /usr/local/instantclient/libclntsh.so.12.1 /usr/local/instantclient/libclntsh.so
-RUN ln -s /usr/local/instantclient/sqlplus /usr/bin/sqlplus
+RUN ln -s /usr/local/instantclient_12_2/libclntsh.so.12.1 /usr/local/instantclient/libclntsh.so
+RUN ln -s /usr/local/instantclient_12_2/libocci.so.12.1 /usr/local/instantclient/libocci.so
+RUN ln -s /usr/local/instantclient_12_2/sqlplus /usr/bin/sqlplus
+
+RUN echo /usr/local/instantclient_12_2 > /etc/ld.so.conf.d/oracle-instantclient
+
+RUN ldconfig
 
 RUN echo 'export LD_LIBRARY_PATH="/usr/local/instantclient"' >> /root/.bashrc
 RUN echo 'umask 002' >> /root/.bashrc
 
 RUN echo 'export LD_LIBRARY_PATH="/usr/local/instantclient"'
 
-RUN apt-get install build-essential libaio1
-RUN pecl channel-update pecl.php.net
+# RUN pecl channel-update pecl.php.net
 
-RUN echo 'instantclient,/usr/local/instantclient' | pecl install oci8-2.2.0
+RUN echo 'instantclient,/usr/local/instantclient_12_2' | pecl install oci8-2.2.0
 RUN echo "extension=oci8.so" > /usr/local/etc/php/conf.d/php-oci8.ini
 
 RUN apt-get install nano -y
 
-RUN echo "export LD_LIBRARY_PATH=/usr/local/instantclient" >> /etc/apache2/envvars
-RUN echo "export ORACLE_HOME=/usr/local/instantclient" >> /etc/apache2/envvars
-RUN echo "LD_LIBRARY_PATH=/usr/local/instantclient:\$LD_LIBRARY_PATH" >> /etc/environment
+RUN echo "export LD_LIBRARY_PATH=/usr/local/instantclient_12_2" >> /etc/apache2/envvars
+RUN echo "export ORACLE_HOME=/usr/local/instantclient_12_2" >> /etc/apache2/envvars
+RUN echo "LD_LIBRARY_PATH=/usr/local/instantclient_12_2:\$LD_LIBRARY_PATH" >> /etc/environment
 
 RUN echo "<?php echo phpinfo(); ?>" > /var/www/html/phpinfo.php
 RUN echo "<?php echo 'Client Version: ' . oci_client_version(); ?>" > /var/www/html/ocitest.php
@@ -68,7 +73,7 @@ RUN echo "service apache2 restart"
 RUN echo "curl http://localhost/phpinfo.php"
 RUN echo "curl http://localhost/ocitest.php"
 
-CMD ["/usr/sbin/apache2ctl", "-D", "FOREGROUND"]
+# CMD ["/usr/sbin/apache2ctl", "-D", "FOREGROUND"]
 
 EXPOSE 80
 EXPOSE 9000
