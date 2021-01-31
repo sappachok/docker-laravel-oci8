@@ -1,4 +1,4 @@
-FROM php:7.3-apache
+FROM php:7.3-fpm
 
 USER root
 
@@ -54,7 +54,9 @@ RUN echo 'export LD_LIBRARY_PATH="/usr/local/instantclient"'
 RUN pecl channel-update pecl.php.net
 
 RUN echo 'instantclient,/usr/local/instantclient_12_2' | pecl install oci8-2.2.0
-RUN echo "extension=oci8.so" > /usr/local/etc/php/conf.d/php-oci8.ini
+#RUN echo "extension=oci8.so" > /usr/local/etc/php/conf.d/php-oci8.ini
+echo "extension = oci8.so" >> /etc/php/7.3/fpm/php.ini
+echo "extension = oci8.so" >> /etc/php/7.3/cli/php.ini
 
 RUN apt-get install nano -y
 
@@ -67,7 +69,8 @@ RUN echo "<?php echo 'Client Version: ' . oci_client_version(); ?>" > /var/www/h
 
 RUN LD_LIBRARY_PATH=/usr/local/instantclient_12_2/ php
 
-RUN echo "service apache2 restart"
+#RUN echo "service apache2 restart"
+RUN service php7.3-fpm restart
 
 # RUN ldd /usr/local/lib/php/extensions/no-debug-non-zts-20190902/oci8.so
 # RUN php -m | grep 'oci8'
