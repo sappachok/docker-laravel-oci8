@@ -1,41 +1,34 @@
 FROM php:7.4-fpm
 
-# Copy File Config
-ADD ./compose/php/www.conf /usr/local/etc/php-fpm.d/www.conf
+# Arguments defined in docker-compose.yml
+ARG user
+ARG uid
 
-# ADD and set Group
-RUN addgroup -g 1000 laravel && adduser -G laravel -g laravel -s /bin/sh -D laravel
-
-# Create folder to run
-RUN mkdir -p /var/www/html
-
-# Set Profile
-RUN chown laravel:laravel /var/www/html
-
-# Work in the specific space
-WORKDIR /var/www/html
-
-# Install dependencies
-RUN apk add --no-cache \
-    freetype \
-    libpng \
-    libjpeg-turbo \
-    freetype-dev \
+# Install system dependencies
+RUN apt-get update && apt-get install -y \
+    git \
+    curl \
     libpng-dev \
-    libjpeg-turbo-dev
+    libonig-dev \
+    libxml2-dev \
+    zip \
+    unzip
 
-RUN docker-php-ext-configure gd \
-    --with-freetype \
-    --with-jpeg 
+# Clear cache
+RUN apt-get clean && rm -rf /var/lib/apt/lists/*
 
-RUN NPROC=$(grep -c ^processor /proc/cpuinfo 2>/dev/null || 1) && \
-    docker-php-ext-install -j${NPROC} gd 
+# Install PHP extensions
+RUN docker-php-ext-install pdo_mysql mbstring exif pcntl bcmath gd
 
-RUN apk del --no-cache freetype-dev libpng-dev libjpeg-turbo-dev
+# Get latest Composer
+COPY --from=composer:latest /usr/bin/composer /usr/bin/composer
 
-RUN docker-php-ext-install pdo pdo_mysql
+# Create system user to run Composer and Artisan Commands
+RUN useradd -G www-data,root -u $uid -d /home/$user $user
+RUN mkdir -p /home/$user/.composer && \
+    chown -R $user:$user /home/$user
 
-# install and enable xdebug
-RUN apk add --no-cache $PHPIZE_DEPS \
-	&& pecl install xdebug-2.9.7 \
-	&& docker-php-ext-enable xdebug
+# Set working directory
+WORKDIR /var/www
+
+USER $user
