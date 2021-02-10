@@ -35,3 +35,8 @@ RUN mkdir -p /home/$user/.composer && \
 WORKDIR /var/www
 
 USER $user
+
+RUN php -m
+
+EXPOSE 80
+EXPOSE 9000

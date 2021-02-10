@@ -4,19 +4,21 @@ services:
     image: sappachok/docker-laravel-oci8
     container_name: 'laravelapp'
     tty: true
-    command:  php artisan serve --host=0.0.0.0 --port=9000
-    ports:
-      - 8080:80
-      - 9000:9000
+    #command:  php artisan serve --host=0.0.0.0 --port=9000
+    #ports:
+    #  - 8080:80
+    #  - 9000:9000
+    working_dir: /var/www/
     volumes:
-      - c://xampp3//htdocs//laravel//laravel-ora:/var/www/html
-    restart: always
+      - d://repo//laravelapp:/var/www
+    restart: unless-stopped
     networks:
       - app-network
 
   nginx:
     image: nginx:alpine
     container_name: ngx
+    restart: unless-stopped
     ports:
       - 8000:80
     volumes:
