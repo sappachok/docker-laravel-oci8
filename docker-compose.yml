@@ -1,0 +1,21 @@
+version: "3.7"
+services: 
+  app:
+    image: sappachok/docker-laravel-oci8
+    container_name: 'laravelapp'
+    tty: true
+    #command:  php artisan serve --host=0.0.0.0 --port=9000
+    ports:
+    #  - 8080:80
+      - 9000:9000
+    working_dir: /var/www/
+    volumes:
+      - c://xampp3/htdocs/laravel/laravel-ora:/var/www
+    restart: unless-stopped
+    networks:
+      - app-network
+
+#Docker Networks
+networks:
+  app-network:
+    driver: bridge

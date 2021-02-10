@@ -137,6 +137,47 @@ RUN chmod +x /usr/bin/d
 
 RUN rm -r /var/lib/apt/lists/*
 
+# Oracle instantclient
+ADD ./instantclient/12.2.0.1.0/instantclient-basic-linux.x64-12.2.0.1.0.zip /tmp/
+ADD ./instantclient/12.2.0.1.0/instantclient-sdk-linux.x64-12.2.0.1.0.zip /tmp/
+ADD ./instantclient/12.2.0.1.0/instantclient-sqlplus-linux.x64-12.2.0.1.0.zip /tmp/
+
+RUN unzip /tmp/instantclient-basic-linux.x64-12.2.0.1.0.zip -d /usr/local/
+RUN unzip /tmp/instantclient-sdk-linux.x64-12.2.0.1.0.zip -d /usr/local/
+RUN unzip /tmp/instantclient-sqlplus-linux.x64-12.2.0.1.0.zip -d /usr/local/
+
+RUN ln -s /usr/local/instantclient_12_2 /usr/local/instantclient
+RUN ln -s /usr/local/instantclient_12_2/libclntsh.so.12.1 /usr/local/instantclient/libclntsh.so
+RUN ln -s /usr/local/instantclient_12_2/libocci.so.12.1 /usr/local/instantclient/libocci.so
+RUN ln -s /usr/local/instantclient_12_2/sqlplus /usr/bin/sqlplus
+
+RUN sh -c echo '/usr/local/instantclient_12_2' > /etc/ld.so.conf.d/oracle-instantclient
+
+RUN ldconfig
+
+RUN echo 'export LD_LIBRARY_PATH="/usr/local/instantclient"' >> /root/.bashrc
+RUN echo 'umask 002' >> /root/.bashrc
+
+RUN echo 'export LD_LIBRARY_PATH="/usr/local/instantclient"'
+
+RUN pecl channel-update pecl.php.net
+
+RUN echo 'instantclient,/usr/local/instantclient_12_2' | pecl install oci8-2.2.0
+RUN echo "extension=oci8.so" > /usr/local/etc/php/conf.d/php-oci8.ini
+
+RUN apt-get install nano -y
+
+RUN echo "export LD_LIBRARY_PATH=/usr/local/instantclient_12_2" >> /etc/apache2/envvars
+RUN echo "export ORACLE_HOME=/usr/local/instantclient_12_2" >> /etc/apache2/envvars
+RUN echo "LD_LIBRARY_PATH=/usr/local/instantclient_12_2:\$LD_LIBRARY_PATH" >> /etc/environment
+
+RUN echo "<?php echo phpinfo(); ?>" > /var/www/html/phpinfo.php
+RUN echo "<?php echo 'Client Version: ' . oci_client_version(); ?>" > /var/www/html/ocitest.php
+
+RUN LD_LIBRARY_PATH=/usr/local/instantclient_12_2/ php
+
+RUN echo "service apache2 restart"
+
 RUN usermod -u 1000 www-data
 
 WORKDIR /var/www
