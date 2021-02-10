@@ -23,6 +23,10 @@ RUN apt-get update && \
         libxml2-dev \
         libreadline-dev \
         libgmp-dev \
+        zip \
+        curl \
+        unzip \
+        libaio1 \
         mariadb-client
 
 # Install soap extention
