@@ -151,36 +151,52 @@ RUN unzip /tmp/instantclient-sdk-linux.x64-12.2.0.1.0.zip -d /usr/local/
 RUN unzip /tmp/instantclient-sqlplus-linux.x64-12.2.0.1.0.zip -d /usr/local/
 
 RUN ln -s /usr/local/instantclient_12_2 /usr/local/instantclient
-RUN ln -s /usr/local/instantclient_12_2/libclntsh.so.12.1 /usr/local/instantclient/libclntsh.so
-RUN ln -s /usr/local/instantclient_12_2/libocci.so.12.1 /usr/local/instantclient/libocci.so
-RUN ln -s /usr/local/instantclient_12_2/sqlplus /usr/bin/sqlplus
+RUN ln -s /usr/local/instantclient/libclntsh.so.* /usr/local/instantclient/libclntsh.so
+RUN ln -s /usr/local/instantclient/lib* /usr/lib
+RUN ln -s /usr/local/instantclient/sqlplus /usr/bin/sqlplus
 
-RUN sh -c echo '/usr/local/instantclient_12_2' > /etc/ld.so.conf.d/oracle-instantclient
+# Install Composer
+RUN curl -sS https://getcomposer.org/installer | php -- \
+        --install-dir=/usr/local/bin \
+        --filename=composer
 
-RUN ldconfig
+# Install PHP extensions
+RUN docker-php-ext-configure gd --with-freetype-dir=/usr/include/ --with-jpeg-dir=/usr/include/ \
+    && echo 'instantclient,/usr/local/instantclient/' | pecl install oci8 \
+    && docker-php-ext-configure pdo_oci --with-pdo-oci=instantclient,/usr/local/instantclient,12.1 \
+    && docker-php-ext-configure pdo_dblib --with-libdir=/lib/x86_64-linux-gnu \
+    && pecl install sqlsrv-4.1.6.1 \
+    && pecl install pdo_sqlsrv-4.1.6.1 \
+    && pecl install redis \
+    && pecl install memcached \
+    && docker-php-ext-install \
+            iconv \
+            mbstring \
+            intl \
+            mcrypt \
+            gd \
+            pgsql \
+            mysqli \
+            pdo_pgsql \
+            pdo_mysql \
+            pdo_oci \
+            pdo_dblib \
+            soap \
+            sockets \
+            zip \
+            pcntl \
+            ftp \
+    && docker-php-ext-enable \
+            oci8 \
+            sqlsrv \
+            pdo_sqlsrv \
+            redis \
+            memcached \
+            opcache
 
-RUN echo 'export LD_LIBRARY_PATH="/usr/local/instantclient"' >> /root/.bashrc
-RUN echo 'umask 002' >> /root/.bashrc
+RUN php -v
 
-RUN echo 'export LD_LIBRARY_PATH="/usr/local/instantclient"'
-
-RUN pecl channel-update pecl.php.net
-
-RUN echo 'instantclient,/usr/local/instantclient_12_2' | pecl install oci8-2.2.0
-RUN echo "extension=oci8.so" > /usr/local/etc/php/conf.d/php-oci8.ini
-
-RUN apt-get install nano -y
-
-RUN echo "export LD_LIBRARY_PATH=/usr/local/instantclient_12_2" >> /etc/apache2/envvars
-RUN echo "export ORACLE_HOME=/usr/local/instantclient_12_2" >> /etc/apache2/envvars
-RUN echo "LD_LIBRARY_PATH=/usr/local/instantclient_12_2:\$LD_LIBRARY_PATH" >> /etc/environment
-
-RUN echo "<?php echo phpinfo(); ?>" > /var/www/html/phpinfo.php
-RUN echo "<?php echo 'Client Version: ' . oci_client_version(); ?>" > /var/www/html/ocitest.php
-
-RUN LD_LIBRARY_PATH=/usr/local/instantclient_12_2/ php
-
-RUN echo "service apache2 restart"
+# End Install Oracle
 
 RUN usermod -u 1000 www-data
 
