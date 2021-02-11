@@ -70,7 +70,7 @@ RUN pecl install memcached-3.1.5 && docker-php-ext-enable memcached
 
 RUN mv "$PHP_INI_DIR/php.ini-development" "$PHP_INI_DIR/php.ini"
 
-service php7.4-fpm restart
+RUN service php7.4-fpm restart
 
 # install composer
 
