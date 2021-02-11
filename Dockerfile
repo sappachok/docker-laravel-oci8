@@ -4,7 +4,7 @@ FROM php:7.4.14-fpm-buster
 
 RUN set -x \
         && apt-get update \
-        && apt-get install php-dev php-pear build-essential libaio1 mc unzip zlib1g-dev libmemcached-dev --no-install-recommends --no-install-suggests -y \
+        && apt-get install libaio1 mc unzip zlib1g-dev libmemcached-dev --no-install-recommends --no-install-suggests -y \
         && apt-get clean \
         && rm -rf /var/lib/apt/lists/*
 
@@ -46,9 +46,8 @@ RUN pecl install xdebug-3.0.2 && docker-php-ext-enable xdebug
 COPY xdebug.ini /usr/local/etc/php/conf.d/xdebug.ini
 
 # install & enable oci8
-pecl channel-update pecl.php.net
 
-RUN pecl install oci8-2.2.0 \
+RUN pecl install --onlyreqdeps --nobuild oci8-2.2.0 \
         && cd "$(pecl config-get temp_dir)/oci8" \
         && phpize \
         && ./configure --with-oci8=instantclient,/usr/local/instantclient_12_2 \
@@ -69,8 +68,6 @@ RUN pecl install memcached-3.1.5 && docker-php-ext-enable memcached
 # copy dev php.ini
 
 RUN mv "$PHP_INI_DIR/php.ini-development" "$PHP_INI_DIR/php.ini"
-
-RUN service php7.4-fpm restart
 
 # install composer
 
