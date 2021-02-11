@@ -59,6 +59,8 @@ RUN pecl install --onlyreqdeps --nobuild oci8-2.2.0 \
 RUN docker-php-ext-configure pdo_oci --with-pdo-oci=instantclient,/usr/local/instantclient_12_2,12.2 \
         && docker-php-ext-install pdo_oci
 
+RUN LD_LIBRARY_PATH=/usr/local/instantclient_12_2/ php
+
 # install & enable memcached
 
 RUN pecl install memcached-3.1.5 && docker-php-ext-enable memcached
