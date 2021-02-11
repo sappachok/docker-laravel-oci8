@@ -10,19 +10,26 @@ RUN set -x \
 
 # install oracle instant client
 
-ENV ORA_CLIENT=instantclient-basic-linux.x64-21.1.0.0.0.zip
-ENV ORA_CLIENT_SDK=instantclient-sdk-linux.x64-21.1.0.0.0.zip
-ENV ORA_URL_PART=https://download.oracle.com/otn_software/linux/instantclient/211000
+#ENV ORA_CLIENT=instantclient-basic-linux.x64-21.1.0.0.0.zip
+#ENV ORA_CLIENT_SDK=instantclient-sdk-linux.x64-21.1.0.0.0.zip
+#ENV ORA_URL_PART=https://download.oracle.com/otn_software/linux/instantclient/211000
+
+ENV ORA_CLIENT=instantclient-basic-linux.x64-12.2.0.1.0.zip
+ENV ORA_CLIENT_SDK=instantclient-sdk-linux.x64-12.2.0.1.0.zip
+ENV ORA_CLIENT_SQLPLUS=instantclient-sqlplus-linux.x64-12.2.0.1.0.zip
+ENV ORA_URL_PART=https://download.oracle.com/otn_software/linux/instantclient/122010
 
 WORKDIR /opt
 RUN curl -O ${ORA_URL_PART}/${ORA_CLIENT} \
     && curl -O ${ORA_URL_PART}/${ORA_CLIENT_SDK} \
+    && curl -O ${ORA_URL_PART}/${ORA_CLIENT_SQLPLUS} \
     && unzip /opt/${ORA_CLIENT} \
     && unzip /opt/${ORA_CLIENT_SDK} \
-    && rm /opt/${ORA_CLIENT} && rm ${ORA_CLIENT_SDK}
+    && unzip /opt/${ORA_CLIENT_SQLPLUS} \
+    && rm /opt/${ORA_CLIENT} && rm ${ORA_CLIENT_SDK} && rm ${ORA_CLIENT_SQLPLUS}
 
 ## put your tnsnames.ora if you have it
-# COPY instantclient/tnsnames.ora /opt/instantclient_21_1/network/admin/tnsnames.ora
+# COPY instantclient/tnsnames.ora /opt/instantclient_12_2/network/admin/tnsnames.ora
 
 ## put your oracle.conf with full path to instant client
 # COPY instantclient/oracle.conf /etc/ld.so.conf.d/oracle.conf
@@ -43,13 +50,13 @@ COPY xdebug.ini /usr/local/etc/php/conf.d/xdebug.ini
 RUN pecl install --onlyreqdeps --nobuild oci8-2.2.0 \
         && cd "$(pecl config-get temp_dir)/oci8" \
         && phpize \
-        && ./configure --with-oci8=instantclient,/opt/instantclient_21_1 \
+        && ./configure --with-oci8=instantclient,/opt/instantclient_12_2 \
         && make && make install \
         && docker-php-ext-enable oci8
 
 # install & enable pdo-oci
 
-RUN docker-php-ext-configure pdo_oci --with-pdo-oci=instantclient,/opt/instantclient_21_1,21.1 \
+RUN docker-php-ext-configure pdo_oci --with-pdo-oci=instantclient,/opt/instantclient_12_2,12.2 \
         && docker-php-ext-install pdo_oci
 
 # install & enable memcached
