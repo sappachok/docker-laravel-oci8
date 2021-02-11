@@ -161,15 +161,16 @@ RUN curl -sS https://getcomposer.org/installer | php -- \
         --filename=composer
 
 # Install PHP extensions
-RUN docker-php-ext-configure gd --with-freetype-dir=/usr/include/ --with-jpeg-dir=/usr/include/ \
-    && echo 'instantclient,/usr/local/instantclient/' | pecl install oci8 \
-    && docker-php-ext-configure pdo_oci --with-pdo-oci=instantclient,/usr/local/instantclient,12.1 \
+RUN docker-php-ext-configure gd --with-freetype-dir=/usr/include/ --with-jpeg-dir=/usr/include/
+RUN echo 'instantclient,/usr/local/instantclient/' | pecl install oci8
+RUN docker-php-ext-configure pdo_oci --with-pdo-oci=instantclient,/usr/local/instantclient,12.1 \
     && docker-php-ext-configure pdo_dblib --with-libdir=/lib/x86_64-linux-gnu \
     && pecl install sqlsrv-4.1.6.1 \
     && pecl install pdo_sqlsrv-4.1.6.1 \
     && pecl install redis \
-    && pecl install memcached \
-    && docker-php-ext-install \
+    && pecl install memcached
+
+RUN docker-php-ext-install \
             iconv \
             mbstring \
             intl \
@@ -185,8 +186,9 @@ RUN docker-php-ext-configure gd --with-freetype-dir=/usr/include/ --with-jpeg-di
             sockets \
             zip \
             pcntl \
-            ftp \
-    && docker-php-ext-enable \
+            ftp
+
+RUN docker-php-ext-enable \
             oci8 \
             sqlsrv \
             pdo_sqlsrv \
