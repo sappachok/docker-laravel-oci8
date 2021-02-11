@@ -20,10 +20,12 @@ RUN curl -O ${ORA_URL_PART}/${ORA_CLIENT} \
     && unzip /opt/${ORA_CLIENT} \
     && unzip /opt/${ORA_CLIENT_SDK} \
     && rm /opt/${ORA_CLIENT} && rm ${ORA_CLIENT_SDK}
+
 ## put your tnsnames.ora if you have it
-COPY instantclient/tnsnames.ora /opt/instantclient_21_1/network/admin/tnsnames.ora
+# COPY instantclient/tnsnames.ora /opt/instantclient_21_1/network/admin/tnsnames.ora
+
 ## put your oracle.conf with full path to instant client
-COPY instantclient/oracle.conf /etc/ld.so.conf.d/oracle.conf
+# COPY instantclient/oracle.conf /etc/ld.so.conf.d/oracle.conf
 RUN ldconfig
 
 
