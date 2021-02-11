@@ -50,13 +50,13 @@ COPY xdebug.ini /usr/local/etc/php/conf.d/xdebug.ini
 RUN pecl install --onlyreqdeps --nobuild oci8-2.2.0 \
         && cd "$(pecl config-get temp_dir)/oci8" \
         && phpize \
-        && ./configure --with-oci8=instantclient,/usr/local/instantclient \
+        && ./configure --with-oci8=instantclient,/usr/local/instantclient_12_2 \
         && make && make install \
         && docker-php-ext-enable oci8
 
 # install & enable pdo-oci
 
-RUN docker-php-ext-configure pdo_oci --with-pdo-oci=instantclient,/usr/local/instantclient \
+RUN docker-php-ext-configure pdo_oci --with-pdo-oci=instantclient,/usr/local/instantclient_12_2,12.2 \
         && docker-php-ext-install pdo_oci
 
 # install & enable memcached
