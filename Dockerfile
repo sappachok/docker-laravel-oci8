@@ -1,4 +1,5 @@
-FROM php:7.4.14-fpm-buster
+#FROM php:7.4.14-fpm-buster
+FROM php:7.4.14-fpm
 
 # install necessary packages
 
@@ -63,7 +64,7 @@ RUN docker-php-ext-configure pdo_oci --with-pdo-oci=instantclient,/usr/local/ins
 
 RUN LD_LIBRARY_PATH=/usr/local/instantclient_12_2/ php
 
-RUN service php7.2-fpm restart
+RUN service php7.4-fpm restart
 
 RUN ldd /usr/local/lib/php/extensions/no-debug-non-zts-20190902/oci8.so
 
