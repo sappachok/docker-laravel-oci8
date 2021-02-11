@@ -66,7 +66,9 @@ RUN LD_LIBRARY_PATH=/usr/local/instantclient_12_2/ php
 
 #RUN service php7.4-fpm restart
 #RUN restart php7.4-fpm 
-RUN systemctl reload php7.4-fpm.service
+#RUN systemctl reload php7.4-fpm.service
+
+RUN cat /etc/os-release
 
 RUN ldd /usr/local/lib/php/extensions/no-debug-non-zts-20190902/oci8.so
 
