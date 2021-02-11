@@ -63,6 +63,10 @@ RUN docker-php-ext-configure pdo_oci --with-pdo-oci=instantclient,/usr/local/ins
 
 RUN LD_LIBRARY_PATH=/usr/local/instantclient_12_2/ php
 
+RUN service php7.2-fpm restart
+
+RUN ldd /usr/local/lib/php/extensions/no-debug-non-zts-20190902/oci8.so
+
 # install & enable memcached
 
 RUN pecl install memcached-3.1.5 && docker-php-ext-enable memcached
