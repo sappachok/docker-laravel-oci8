@@ -164,7 +164,7 @@ RUN curl -sS https://getcomposer.org/installer | php -- \
 
 #RUN docker-php-ext-configure gd --with-freetype-dir=/usr/include/ --with-jpeg-dir=/usr/include/
 
-RUN echo 'instantclient,/usr/local/instantclient/' | pecl install oci8
+RUN echo 'instantclient,/usr/local/instantclient/' | pecl install oci8-2.2.0
 RUN docker-php-ext-configure pdo_oci --with-pdo-oci=instantclient,/usr/local/instantclient,12.1 \
     && docker-php-ext-configure pdo_dblib --with-libdir=/lib/x86_64-linux-gnu \
     && pecl install sqlsrv-4.1.6.1 \
