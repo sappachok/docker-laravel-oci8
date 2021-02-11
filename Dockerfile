@@ -4,7 +4,7 @@ FROM php:7.4.14-fpm-buster
 
 RUN set -x \
         && apt-get update \
-        && apt-get install libaio-dev libaio1 mc unzip zlib1g-dev libmemcached-dev --no-install-recommends --no-install-suggests -y \
+        && apt-get install libaio1 mc unzip zlib1g-dev libmemcached-dev --no-install-recommends --no-install-suggests -y \
         && apt-get clean \
         && rm -rf /var/lib/apt/lists/*
 
