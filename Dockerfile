@@ -12,25 +12,25 @@ RUN set -x \
 # install oracle instant client
 
 # Oracle instantclient
-ADD ./instantclient/12.2.0.1.0/instantclient-basic-linux.x64-12.2.0.1.0.zip /tmp/
-ADD ./instantclient/12.2.0.1.0/instantclient-sdk-linux.x64-12.2.0.1.0.zip /tmp/
-ADD ./instantclient/12.2.0.1.0/instantclient-sqlplus-linux.x64-12.2.0.1.0.zip /tmp/
+ADD ./instantclient/18.5.0.0.0/instantclient-basic-linux.x64-18.5.0.0.0dbru.zip /tmp/
+ADD ./instantclient/18.5.0.0.0/instantclient-sdk-linux.x64-18.5.0.0.0dbru.zip /tmp/
+ADD ./instantclient/18.5.0.0.0/instantclient-sqlplus-linux.x64-18.5.0.0.0dbru.zip /tmp/
 
-RUN unzip /tmp/instantclient-basic-linux.x64-12.2.0.1.0.zip -d /usr/local/
-RUN unzip /tmp/instantclient-sdk-linux.x64-12.2.0.1.0.zip -d /usr/local/
-RUN unzip /tmp/instantclient-sqlplus-linux.x64-12.2.0.1.0.zip -d /usr/local/
+RUN unzip /tmp/instantclient-basic-linux.x64-18.5.0.0.0dbru.zip -d /usr/local/
+RUN unzip /tmp/instantclient-sdk-linux.x64-18.5.0.0.0dbru.zip -d /usr/local/
+RUN unzip /tmp/instantclient-sqlplus-linux.x64-18.5.0.0.0dbru.zip -d /usr/local/
 
-RUN ln -s /usr/local/instantclient_12_2 /usr/local/instantclient
-RUN ln -s /usr/local/instantclient_12_2/libclntsh.so.12.1 /usr/local/instantclient/libclntsh.so
-RUN ln -s /usr/local/instantclient_12_2/libocci.so.12.1 /usr/local/instantclient/libocci.so
-RUN ln -s /usr/local/instantclient_12_2/sqlplus /usr/bin/sqlplus
+RUN ln -s /usr/local/instantclient_18_5 /usr/local/instantclient
+#RUN ln -s /usr/local/instantclient_18_5/libclntsh.so.18.5 /usr/local/instantclient/libclntsh.so
+#RUN ln -s /usr/local/instantclient_18_5/libocci.so.18.5 /usr/local/instantclient/libocci.so
+RUN ln -s /usr/local/instantclient_18_5/sqlplus /usr/bin/sqlplus
 
-RUN sh -c echo '/usr/local/instantclient_12_2' > /etc/ld.so.conf.d/oracle-instantclient
+RUN sh -c echo '/usr/local/instantclient_18_5' > /etc/ld.so.conf.d/oracle-instantclient
 
 RUN ldconfig
 
 ## put your tnsnames.ora if you have it
-# COPY instantclient/tnsnames.ora /usr/local/instantclient_12_2/network/admin/tnsnames.ora
+# COPY instantclient/tnsnames.ora /usr/local/instantclient_18_5/network/admin/tnsnames.ora
 
 ## put your oracle.conf with full path to instant client
 # COPY instantclient/oracle.conf /etc/ld.so.conf.d/oracle.conf
@@ -48,24 +48,24 @@ COPY xdebug.ini /usr/local/etc/php/conf.d/xdebug.ini
 
 # install & enable oci8
 
-RUN echo 'export LD_LIBRARY_PATH="/usr/local/instantclient_12_2"'
-RUN LD_LIBRARY_PATH=/usr/local/instantclient_12_2/ php
+RUN echo 'export LD_LIBRARY_PATH="/usr/local/instantclient_18_5"'
+RUN LD_LIBRARY_PATH=/usr/local/instantclient_18_5/ php
 
 RUN pecl channel-update pecl.php.net
 
 #RUN pecl install --onlyreqdeps --nobuild oci8-2.2.0 \
 #        && cd "$(pecl config-get temp_dir)/oci8" \
 #        && phpize \
-#        && ./configure --with-oci8=instantclient,/usr/local/instantclient_12_2 \
+#        && ./configure --with-oci8=instantclient,/usr/local/instantclient_18_5 \
 #        && make && make install \
 #        && docker-php-ext-enable oci8
 
-RUN echo 'instantclient,/usr/local/instantclient_12_2' | pecl install oci8-2.2.0
+RUN echo 'instantclient,/usr/local/instantclient_18_5' | pecl install oci8-2.2.0
 RUN docker-php-ext-enable oci8
 
 # install & enable pdo-oci
 
-RUN docker-php-ext-configure pdo_oci --with-pdo-oci=instantclient,/usr/local/instantclient_12_2,12.2 \
+RUN docker-php-ext-configure pdo_oci --with-pdo-oci=instantclient,/usr/local/instantclient_18_5,18.5 \
         && docker-php-ext-install pdo_oci
 
 #RUN service php7.4-fpm restart
