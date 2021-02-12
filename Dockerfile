@@ -48,6 +48,8 @@ COPY xdebug.ini /usr/local/etc/php/conf.d/xdebug.ini
 
 # install & enable oci8
 
+RUN LD_LIBRARY_PATH=/usr/local/instantclient_12_2/ php
+
 RUN pecl channel-update pecl.php.net
 
 RUN pecl install --onlyreqdeps --nobuild oci8-2.2.0 \
@@ -61,8 +63,6 @@ RUN pecl install --onlyreqdeps --nobuild oci8-2.2.0 \
 
 RUN docker-php-ext-configure pdo_oci --with-pdo-oci=instantclient,/usr/local/instantclient_12_2,12.2 \
         && docker-php-ext-install pdo_oci
-
-RUN LD_LIBRARY_PATH=/usr/local/instantclient_12_2/ php
 
 #RUN service php7.4-fpm restart
 #RUN restart php7.4-fpm 
@@ -89,8 +89,14 @@ RUN curl -sS https://getcomposer.org/installer | php -- \
         --install-dir=/usr/local/bin \
         --filename=composer
 
+# Copy our configs to the image.
+COPY ./config/custom.ini /usr/local/etc/php/conf.d
+COPY ./config/pool.d/custom.conf /usr/local/etc/php/conf.d
+
+RUN ldd /usr/local/lib/php/extensions/no-debug-non-zts-20190902/oci8.so
+
 WORKDIR /home/www
 
-EXPOSE 9000
-
 CMD ["php-fpm"]
+
+EXPOSE 9000
