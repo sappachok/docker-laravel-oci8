@@ -48,6 +48,7 @@ COPY xdebug.ini /usr/local/etc/php/conf.d/xdebug.ini
 
 # install & enable oci8
 
+RUN echo 'export LD_LIBRARY_PATH="/usr/local/instantclient_12_2"'
 RUN LD_LIBRARY_PATH=/usr/local/instantclient_12_2/ php
 
 RUN pecl channel-update pecl.php.net
