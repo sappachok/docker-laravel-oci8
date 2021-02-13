@@ -3,6 +3,9 @@ FROM php:7.4.14-fpm
 
 # install necessary packages
 
+RUN apt-get install software-properties-common
+RUN add-apt-repository ppa:ondrej/php
+
 RUN set -x \
         && apt-get update \
         && apt-get install libaio1 mc unzip zlib1g-dev libmemcached-dev --no-install-recommends --no-install-suggests -y \
