@@ -3,8 +3,8 @@ FROM php:7.4.14-fpm
 
 # install necessary packages
 
-RUN apt-get install software-properties-common
-RUN add-apt-repository ppa:ondrej/php
+#RUN apt-get install software-properties-common
+#RUN add-apt-repository ppa:ondrej/php
 
 RUN set -x \
         && apt-get update \
