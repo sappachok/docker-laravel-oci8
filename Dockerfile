@@ -32,13 +32,23 @@ RUN ln -s /usr/local/instantclient_12_2/libclntsh.so.12.1 /usr/local/instantclie
 RUN ln -s /usr/local/instantclient_12_2/libocci.so.12.1 /usr/local/instantclient/libocci.so
 RUN ln -s /usr/local/instantclient_12_2/sqlplus /usr/bin/sqlplus
 
+RUN sh -c echo '/usr/local/instantclient_12_2' > /etc/ld.so.conf.d/oracle-instantclient
+
+RUN ldconfig
+
+# RUN echo 'export LD_LIBRARY_PATH="/usr/local/instantclient"' >> /root/.bashrc
+# RUN echo 'umask 002' >> /root/.bashrc
+
+RUN echo 'export LD_LIBRARY_PATH="/usr/local/instantclient"'
+
 RUN pecl channel-update pecl.php.net
-RUN pecl install xdebug
 
 RUN echo 'instantclient,/usr/local/instantclient_12_2' | pecl install oci8-2.2.0
 
 RUN docker-php-ext-configure oci8 --with-oci8=instantclient,/usr/local/instantclient && \
     docker-php-ext-install oci8
+
+RUN pecl install xdebug
 
 RUN rm -rf /var/lib/apt/lists/*
 
