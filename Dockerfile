@@ -11,9 +11,13 @@ RUN ln -s /usr/local/instantclient_12_2 /usr/local/instantclient && \
     ln -s /usr/local/instantclient/lib* /usr/lib && \
     ln -s /usr/local/instantclient/sqlplus /usr/bin/sqlplus
 
+RUN docker-php-ext-install intl pdo_mysql mbstring sockets soap calendar \
+    && pecl install xdebug
+
 RUN docker-php-ext-configure oci8 --with-oci8=instantclient,/usr/local/instantclient && \
-    docker-php-ext-install oci8-2.2.0 && \
-    rm -rf /var/lib/apt/lists/*
+    docker-php-ext-install oci8
+
+RUN rm -rf /var/lib/apt/lists/*
 
 RUN php -v
 
