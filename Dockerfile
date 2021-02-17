@@ -22,10 +22,10 @@ RUN yes | pecl install xdebug \
     && echo "xdebug.remote_autostart=off" >> /usr/local/etc/php/conf.d/xdebug.ini
 
 # Copy over the php conf
-COPY docker-php.conf /etc/apache2/conf-enabled/docker-php.conf
+# COPY docker-php.conf /etc/apache2/conf-enabled/docker-php.conf
 
 # Copy over the php ini
-COPY docker-php.ini $PHP_INI_DIR/conf.d/
+# COPY docker-php.ini $PHP_INI_DIR/conf.d/
 
 # Set the timezone
 ENV TZ=America/New_York
@@ -44,6 +44,9 @@ ADD ./instantclient/18.5.0.0.0/instantclient-sqlplus-linux.x64-18.5.0.0.0dbru.zi
 RUN unzip /tmp/instantclient-basiclite-linux.x64-18.5.0.0.0dbru.zip -d /usr/local/
 RUN unzip /tmp/instantclient-sdk-linux.x64-18.5.0.0.0dbru.zip -d /usr/local/
 RUN unzip /tmp/instantclient-sqlplus-linux.x64-18.5.0.0.0dbru.zip -d /usr/local/
+
+RUN sh -c echo '/usr/local/instantclient_18_5' > /etc/ld.so.conf.d/oracle-instantclient
+RUN ldconfig
 
 ENV LD_LIBRARY_PATH /usr/local/instantclient_18_5/
 
