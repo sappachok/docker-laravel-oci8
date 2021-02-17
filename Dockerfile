@@ -76,7 +76,7 @@ RUN ldconfig -v
 RUN curl -sS https://getcomposer.org/installer | php -- --install-dir=/usr/local/bin --filename=composer
 
 # Add UID '1000' to www-data
-RUN apk add shadow && usermod -u 1000 www-data && groupmod -g 1000 www-data
+RUN usermod -u 1000 www-data && groupmod -g 1000 www-data
 
 # Copy existing application directory permissions
 COPY --chown=www-data:www-data ./app /var/www
