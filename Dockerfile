@@ -66,7 +66,9 @@ ENV COMPOSER_ALLOW_SUPERUSER 1
 RUN curl -sS https://getcomposer.org/installer | php -- --install-dir=/usr/local/bin --filename=composer
 RUN composer --version
 
+RUN LD_LIBRARY_PATH=/usr/local/instantclient_18_5/ php
 RUN echo "service apache2 restart"
+
 RUN ldd /usr/local/lib/php/extensions/no-debug-non-zts-20200930/oci8.so
 
 # Add the files and set permissions
