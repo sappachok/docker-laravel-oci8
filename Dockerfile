@@ -1,4 +1,4 @@
-FROM php:7.4-fpm
+FROM php:fpm
 LABEL maintainer "Sappachok Singhasuwan <suppachok_sin@nstru.ac.th>"
 
 RUN apt-get update && apt-get install -y \
@@ -51,7 +51,7 @@ RUN echo 'umask 002' >> /root/.bashrc
 
 RUN pecl channel-update pecl.php.net
 
-RUN echo 'instantclient,/usr/local/instantclient_12_2' | pecl install oci8-2.2.0
+RUN echo 'instantclient,/usr/local/instantclient_12_2' | pecl install oci8
 
 RUN docker-php-ext-configure oci8 --with-oci8=instantclient,/usr/local/instantclient && \
     docker-php-ext-install oci8
@@ -62,8 +62,8 @@ RUN rm -rf /var/lib/apt/lists/*
 
 RUN php -v
 
-# RUN ldd /usr/local/lib/php/extensions/no-debug-non-zts-20200930/oci8.so
-RUN ldd /usr/local/lib/php/extensions/no-debug-non-zts-20190902/oci8.so
+RUN ldd /usr/local/lib/php/extensions/no-debug-non-zts-20200930/oci8.so
+# RUN ldd /usr/local/lib/php/extensions/no-debug-non-zts-20190902/oci8.so
 
 RUN ldconfig -v
 RUN php --ri oci8
