@@ -87,7 +87,7 @@ RUN chown www:www /var/www
 # Change current user to www
 USER www
 
-#WORKDIR /home/www
+WORKDIR /var/www
 
 EXPOSE 9000
 EXPOSE 8000
