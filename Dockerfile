@@ -7,12 +7,13 @@ RUN apt-get update && apt-get install -y \
         libpng-dev \
         libaio1 \
         libldap2-dev
-RUN docker-php-ext-install -j$(nproc) iconv gettext \
-    && docker-php-ext-configure gd --with-freetype-dir=/usr/include/ --with-jpeg-dir=/usr/include/ \
-    && docker-php-ext-install -j$(nproc) gd \
-    && docker-php-ext-install pdo pdo_mysql mysqli bcmath \
-    && docker-php-ext-configure ldap --with-libdir=lib/x86_64-linux-gnu/ \
-    && docker-php-ext-install ldap
+
+#RUN docker-php-ext-install -j$(nproc) iconv gettext \
+#    && docker-php-ext-configure gd --with-freetype-dir=/usr/include/ --with-jpeg-dir=/usr/include/ \
+#    && docker-php-ext-install -j$(nproc) gd \
+#    && docker-php-ext-install pdo pdo_mysql mysqli bcmath \
+#    && docker-php-ext-configure ldap --with-libdir=lib/x86_64-linux-gnu/ \
+#    && docker-php-ext-install ldap
 
 # Install XDebug - Required for code coverage in PHPUnit
 RUN yes | pecl install xdebug \
