@@ -45,9 +45,9 @@ RUN echo 'export ORACLE_HOME=/opt/oracle' >> /root/.bashrc
 RUN echo 'export LD_LIBRARY_PATH="/usr/local/instantclient"' >> /root/.bashrc
 RUN echo 'umask 002' >> /root/.bashrc
 
-RUN cd /usr/local
-RUN find instantclient_12_2 -type f -exec chmod 644 {} +
-RUN find instantclient_12_2 -type d -exec chmod 755 {} +
+#RUN cd /usr/local
+#RUN find instantclient_12_2 -type f -exec chmod 644 {} +
+#RUN find instantclient_12_2 -type d -exec chmod 755 {} +
 
 RUN pecl channel-update pecl.php.net
 
