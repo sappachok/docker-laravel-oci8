@@ -41,9 +41,10 @@ RUN LD_LIBRARY_PATH=/usr/local/instantclient_18_5/ php
 
 RUN sh -c echo '/usr/local/instantclient_18_5' > /etc/ld.so.conf.d/oracle-instantclient
 
-RUN echo 'export ORACLE_HOME=/opt/oracle' >> /root/.bashrc
-RUN echo 'export LD_LIBRARY_PATH="/usr/local/instantclient"' >> /root/.bashrc
-RUN echo 'umask 002' >> /root/.bashrc
+RUN echo 'export ORACLE_HOME=/opt/oracle' >> ~/.bashrc
+RUN echo 'export LD_LIBRARY_PATH="/usr/local/instantclient"' >> ~/.bashrc
+
+#RUN echo 'umask 002' >> /root/.bashrc
 
 #RUN cd /usr/local
 #RUN find instantclient_18_5 -type f -exec chmod 644 {} +
