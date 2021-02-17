@@ -66,7 +66,7 @@ RUN ldd /usr/local/lib/php/extensions/no-debug-non-zts-20200930/oci8.so
 # RUN ldd /usr/local/lib/php/extensions/no-debug-non-zts-20190902/oci8.so
 
 RUN ldconfig -v
-RUN php --ri oci8
+# RUN php --ri oci8
 
 #RUN reboot
 
