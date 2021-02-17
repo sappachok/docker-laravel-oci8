@@ -41,7 +41,7 @@ ADD ./instantclient/18.5.0.0.0/instantclient-basic-linux.x64-18.5.0.0.0dbru.zip 
 ADD ./instantclient/18.5.0.0.0/instantclient-sdk-linux.x64-18.5.0.0.0dbru.zip /tmp/
 ADD ./instantclient/18.5.0.0.0/instantclient-sqlplus-linux.x64-18.5.0.0.0dbru.zip /tmp/
 
-RUN unzip /tmp/instantclient-basiclite-linux.x64-18.5.0.0.0dbru.zip -d /usr/local/
+RUN unzip /tmp/instantclient-basic-linux.x64-18.5.0.0.0dbru.zip -d /usr/local/
 RUN unzip /tmp/instantclient-sdk-linux.x64-18.5.0.0.0dbru.zip -d /usr/local/
 RUN unzip /tmp/instantclient-sqlplus-linux.x64-18.5.0.0.0dbru.zip -d /usr/local/
 
