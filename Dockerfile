@@ -37,13 +37,13 @@ RUN sh -c echo '/usr/local/instantclient_12_2' > /etc/ld.so.conf.d/oracle-instan
 RUN ldconfig
 
 #RUN echo 'export LD_LIBRARY_PATH="/usr/local/instantclient"'
+RUN LD_LIBRARY_PATH=/usr/local/instantclient_12_2/ php
 
 RUN sh -c echo '/usr/local/instantclient_12_2' > /etc/ld.so.conf.d/oracle-instantclient
 
-RUN echo 'export ORACLE_HOME=/opt/oracle' >> ~/.bashrc
-RUN echo 'export LD_LIBRARY_PATH="/usr/local/instantclient"' >> ~/.bashrc
-
-#RUN echo 'umask 002' >> /root/.bashrc
+RUN echo 'export ORACLE_HOME=/opt/oracle' >> /root/.bashrc
+RUN echo 'export LD_LIBRARY_PATH="/usr/local/instantclient"' >> /root/.bashrc
+RUN echo 'umask 002' >> /root/.bashrc
 
 RUN pecl channel-update pecl.php.net
 
@@ -57,8 +57,6 @@ RUN pecl install xdebug
 RUN rm -rf /var/lib/apt/lists/*
 
 RUN php -v
-
-RUN LD_LIBRARY_PATH=/usr/local/instantclient_12_2/ php
 
 RUN ldd /usr/local/lib/php/extensions/no-debug-non-zts-20200930/oci8.so
 
