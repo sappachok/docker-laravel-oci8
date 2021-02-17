@@ -77,7 +77,7 @@ RUN curl -sS https://getcomposer.org/installer | php -- --install-dir=/usr/local
 
 WORKDIR /home/www
 
-# CMD ["php-fpm"]
+CMD ["php-fpm"]
 
 EXPOSE 9000
 EXPOSE 8000
