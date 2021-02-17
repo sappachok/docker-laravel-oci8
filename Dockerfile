@@ -67,8 +67,9 @@ RUN ldd /usr/local/lib/php/extensions/no-debug-non-zts-20200930/oci8.so
 
 RUN ldconfig -v
 # RUN php --ri oci8
-
 #RUN reboot
+
+RUN curl -sS https://getcomposer.org/installer | php -- --install-dir=/usr/local/bin --filename=composer
 
 WORKDIR /home/www
 
