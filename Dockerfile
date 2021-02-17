@@ -43,7 +43,7 @@ RUN echo 'export LD_LIBRARY_PATH="/usr/local/instantclient"'
 
 RUN pecl channel-update pecl.php.net
 
-RUN echo 'instantclient,/usr/local/instantclient_12_2' | pecl install oci8-2.2.0
+RUN echo 'instantclient,/usr/local/instantclient_12_2' | pecl install oci8
 
 RUN docker-php-ext-configure oci8 --with-oci8=instantclient,/usr/local/instantclient && \
     docker-php-ext-install oci8
