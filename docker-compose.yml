@@ -11,6 +11,7 @@ services:
     working_dir: /var/www/
     volumes:
       - c://xampp3/htdocs/laravel/laravel-ora:/var/www
+      - ./php:/usr/local/etc/php
     restart: unless-stopped
     networks:
       - app-network
