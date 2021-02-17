@@ -41,10 +41,9 @@ RUN LD_LIBRARY_PATH=/usr/local/instantclient_18_5/ php
 
 RUN sh -c echo '/usr/local/instantclient_18_5' > /etc/ld.so.conf.d/oracle-instantclient
 
-RUN echo 'export ORACLE_HOME=/opt/oracle' >> ~/.bashrc
-RUN echo 'export LD_LIBRARY_PATH="/usr/local/instantclient"' >> ~/.bashrc
-
-#RUN echo 'umask 002' >> /root/.bashrc
+RUN echo 'export ORACLE_HOME=/opt/oracle' >> /root/.bashrc
+RUN echo 'export LD_LIBRARY_PATH="/usr/local/instantclient"' >> /root/.bashrc
+RUN echo 'umask 002' >> /root/.bashrc
 
 #RUN cd /usr/local
 #RUN find instantclient_18_5 -type f -exec chmod 644 {} +
@@ -76,17 +75,7 @@ RUN ldconfig -v
 
 RUN curl -sS https://getcomposer.org/installer | php -- --install-dir=/usr/local/bin --filename=composer
 
-# Add UID '1000' to www-data
-RUN usermod -u 1000 www-data && groupmod -g 1000 www-data
-
-# Copy existing application directory permissions
-COPY --chown=www-data:www-data . /var/www
-
-# Change current user to www
-USER www-data
-
-
-WORKDIR /var/www
+WORKDIR /home/www
 
 EXPOSE 9000
 EXPOSE 8000
