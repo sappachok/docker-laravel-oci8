@@ -75,17 +75,15 @@ RUN ldconfig -v
 
 RUN curl -sS https://getcomposer.org/installer | php -- --install-dir=/usr/local/bin --filename=composer
 
-# Add user for laravel application
-RUN groupadd -g 1000 www
-RUN useradd -u 1000 -ms /bin/bash -g www www
+# Add UID '1000' to www-data
+RUN apk add shadow && usermod -u 1000 www-data && groupmod -g 1000 www-data
 
 # Copy existing application directory permissions
-#COPY --chown=www:www . /var/www
-
-RUN chown -R www:www /var/www
+COPY --chown=www-data:www-data ./app /var/www
 
 # Change current user to www
-USER www
+USER www-data
+
 
 WORKDIR /var/www
 
