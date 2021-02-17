@@ -36,8 +36,14 @@ RUN sh -c echo '/usr/local/instantclient_12_2' > /etc/ld.so.conf.d/oracle-instan
 
 RUN ldconfig
 
-RUN echo 'export LD_LIBRARY_PATH="/usr/local/instantclient"'
+#RUN echo 'export LD_LIBRARY_PATH="/usr/local/instantclient"'
+
 RUN sh -c echo '/usr/local/instantclient_12_2' > /etc/ld.so.conf.d/oracle-instantclient
+
+RUN echo 'export ORACLE_HOME=/opt/oracle' >> ~/.bashrc
+RUN echo 'export LD_LIBRARY_PATH="/usr/local/instantclient"' >> ~/.bashrc
+
+#RUN echo 'umask 002' >> /root/.bashrc
 
 RUN pecl channel-update pecl.php.net
 
