@@ -75,9 +75,9 @@ RUN ldconfig -v
 
 RUN curl -sS https://getcomposer.org/installer | php -- --install-dir=/usr/local/bin --filename=composer
 
-WORKDIR /home/www
+WORKDIR /var/www
 
 EXPOSE 9000
 EXPOSE 8000
 
-CMD ["php-fpm"]
+#CMD ["php-fpm"]
