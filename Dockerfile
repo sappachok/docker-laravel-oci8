@@ -79,7 +79,7 @@ RUN curl -sS https://getcomposer.org/installer | php -- --install-dir=/usr/local
 RUN usermod -u 1000 www-data && groupmod -g 1000 www-data
 
 # Copy existing application directory permissions
-COPY --chown=www-data:www-data ./app /var/www
+COPY --chown=www-data:www-data . /var/www
 
 # Change current user to www
 USER www-data
