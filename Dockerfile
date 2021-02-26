@@ -1,44 +1,24 @@
-FROM php:8.0.2-fpm
+FROM php:fpm
+LABEL maintainer "Sappachok Singhasuwan <suppachok_sin@nstru.ac.th>"
 
 RUN apt-get update && apt-get install -y \
-        alien \ 
-	build-essential \
-        unzip \
-        libfreetype6-dev \
-        libjpeg62-turbo-dev \
         libpng-dev \
+        zlib1g-dev \
+        libxml2-dev \
+        libzip-dev \
+        libonig-dev \
+        zip \
+        curl \
+        unzip \
         libaio1 \
-        libldap2-dev
+    && docker-php-ext-configure gd \
+    && docker-php-ext-install -j$(nproc) gd \
+    && docker-php-ext-install pdo_mysql \
+    && docker-php-ext-install mysqli \
+    && docker-php-ext-install zip \
+    && docker-php-source delete
 
-#RUN docker-php-ext-install -j$(nproc) iconv gettext \
-#    && docker-php-ext-configure gd --with-freetype-dir=/usr/include/ --with-jpeg-dir=/usr/include/ \
-#    && docker-php-ext-install -j$(nproc) gd \
-#    && docker-php-ext-install pdo pdo_mysql mysqli bcmath \
-#    && docker-php-ext-configure ldap --with-libdir=lib/x86_64-linux-gnu/ \
-#    && docker-php-ext-install ldap
-
-# Install XDebug - Required for code coverage in PHPUnit
-RUN yes | pecl install xdebug \
-    && echo "zend_extension=$(find /usr/local/lib/php/extensions/ -name xdebug.so)" > /usr/local/etc/php/conf.d/xdebug.ini \
-    && echo "xdebug.remote_enable=on" >> /usr/local/etc/php/conf.d/xdebug.ini \
-    && echo "xdebug.remote_autostart=off" >> /usr/local/etc/php/conf.d/xdebug.ini
-
-# Copy over the php conf
-# COPY docker-php.conf /etc/apache2/conf-enabled/docker-php.conf
-
-# Copy over the php ini
-# COPY docker-php.ini $PHP_INI_DIR/conf.d/
-
-# Set the timezone
-ENV TZ=America/New_York
-RUN ln -snf /usr/share/zoneinfo/$TZ /etc/localtime && echo $TZ > /etc/timezone
-
-RUN printf "log_errors = On \nerror_log = /dev/stderr\n" > /usr/local/etc/php/conf.d/php-logs.ini
-
-# Enable mod_rewrite
-RUN a2enmod rewrite
-
-# Install Oracle instantclient
+# Oracle instantclient
 ADD ./instantclient/18.5.0.0.0/instantclient-basic-linux.x64-18.5.0.0.0dbru.zip /tmp/
 ADD ./instantclient/18.5.0.0.0/instantclient-sdk-linux.x64-18.5.0.0.0dbru.zip /tmp/
 ADD ./instantclient/18.5.0.0.0/instantclient-sqlplus-linux.x64-18.5.0.0.0dbru.zip /tmp/
@@ -47,49 +27,57 @@ RUN unzip /tmp/instantclient-basic-linux.x64-18.5.0.0.0dbru.zip -d /usr/local/
 RUN unzip /tmp/instantclient-sdk-linux.x64-18.5.0.0.0dbru.zip -d /usr/local/
 RUN unzip /tmp/instantclient-sqlplus-linux.x64-18.5.0.0.0dbru.zip -d /usr/local/
 
+RUN ln -s /usr/local/instantclient_18_5 /usr/local/instantclient
+#RUN ln -s /usr/local/instantclient_18_5/libclntsh.so.12.1 /usr/local/instantclient/libclntsh.so
+#RUN ln -s /usr/local/instantclient_18_5/libocci.so.12.1 /usr/local/instantclient/libocci.so
+RUN ln -s /usr/local/instantclient_18_5/sqlplus /usr/bin/sqlplus
+
 RUN sh -c echo '/usr/local/instantclient_18_5' > /etc/ld.so.conf.d/oracle-instantclient
+
 RUN ldconfig
 
-ENV LD_LIBRARY_PATH /usr/local/instantclient_18_5/
+#RUN echo 'export LD_LIBRARY_PATH="/usr/local/instantclient"'
+RUN LD_LIBRARY_PATH=/usr/local/instantclient_18_5/ php
 
-RUN ln -s /usr/local/instantclient_18_5 /usr/local/instantclient
-RUN ln -s /usr/local/instantclient/sqlplus /usr/bin/sqlplus
+RUN sh -c echo '/usr/local/instantclient_18_5' > /etc/ld.so.conf.d/oracle-instantclient
 
-RUN echo 'export LD_LIBRARY_PATH="/usr/local/instantclient_18_5"' >> /root/.bashrc
+RUN echo 'export ORACLE_HOME=/opt/oracle' >> /root/.bashrc
+RUN echo 'export LD_LIBRARY_PATH="/usr/local/instantclient"' >> /root/.bashrc
 RUN echo 'umask 002' >> /root/.bashrc
 
+#RUN cd /usr/local
+#RUN find instantclient_18_5 -type f -exec chmod 644 {} +
+#RUN find instantclient_18_5 -type d -exec chmod 755 {} +
+
+RUN pecl channel-update pecl.php.net
+
 RUN echo 'instantclient,/usr/local/instantclient_18_5' | pecl install oci8
-RUN echo "extension=oci8.so" > /usr/local/etc/php/conf.d/php-oci8.ini
+RUN docker-php-ext-configure pdo_oci --with-pdo-oci=instantclient,/usr/local/instantclient
+RUN docker-php-ext-install pdo_oci
 
-# Install Composer
-ENV COMPOSER_HOME /composer
-ENV PATH ./vendor/bin:/composer/vendor/bin:$PATH
-ENV COMPOSER_ALLOW_SUPERUSER 1
-RUN curl -sS https://getcomposer.org/installer | php -- --install-dir=/usr/local/bin --filename=composer
-RUN composer --version
+RUN docker-php-ext-configure oci8 --with-oci8=instantclient,/usr/local/instantclient && \
+    docker-php-ext-install oci8
 
-RUN LD_LIBRARY_PATH=/usr/local/instantclient_18_5/ php
-RUN echo "service apache2 restart"
+RUN docker-php-ext-enable oci8
+
+RUN pecl install xdebug
+
+RUN rm -rf /var/lib/apt/lists/*
+
+RUN php -v
 
 RUN ldd /usr/local/lib/php/extensions/no-debug-non-zts-20200930/oci8.so
+# RUN ldd /usr/local/lib/php/extensions/no-debug-non-zts-20190902/oci8.so
 
-# Add the files and set permissions
-WORKDIR /var/www/html
+RUN ldconfig -v
+# RUN php --ri oci8
+#RUN reboot
 
-# Add user for laravel application
-RUN groupadd -g 1000 www
-RUN useradd -u 1000 -ms /bin/bash -g www www
+RUN curl -sS https://getcomposer.org/installer | php -- --install-dir=/usr/local/bin --filename=composer
 
-# Copy existing application directory contents
-COPY . /var/www
+WORKDIR /var/www
 
-# Copy existing application directory permissions
-COPY --chown=www:www . /var/www
-
-# Change current user to www
-USER www
-
-EXPOSE 80
 EXPOSE 9000
+EXPOSE 8000
 
 CMD ["php-fpm"]
