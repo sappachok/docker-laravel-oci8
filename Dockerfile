@@ -76,11 +76,20 @@ RUN ldd /usr/local/lib/php/extensions/no-debug-non-zts-20200930/oci8.so
 # Add the files and set permissions
 WORKDIR /var/www/html
 
-#ADD . /var/www/html
+# Add user for laravel application
+RUN groupadd -g 1000 www
+RUN useradd -u 1000 -ms /bin/bash -g www www
 
-RUN chown -R www-data:www-data /var/www/html
+# Copy existing application directory contents
+COPY . /var/www
+
+# Copy existing application directory permissions
+COPY --chown=www:www . /var/www
+
+# Change current user to www
+USER www
 
 EXPOSE 80
 EXPOSE 9000
 
-#CMD ["php", "artisan", "serve", "--host=0.0.0.0", "--port=9000"]
+CMD ["php-fpm"]

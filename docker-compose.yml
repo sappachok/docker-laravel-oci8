@@ -11,9 +11,22 @@ services:
       - 9000:9000
     working_dir: /var/www/html
     volumes:
-      - c://xampp3/htdocs/laravel/laravel-ora:/var/www/html
+      #- c://xampp3/htdocs/laravel/laravel-ora:/var/www/html
+      - c://xampp3/htdocs/laravel/example-app:/var/www/html      
       #- ./php:/usr/local/etc/php
     restart: unless-stopped
+    networks:
+      - app-network
+
+  #Nginx Service
+  webserver:
+    image: nginx:alpine
+    container_name: webserver
+    restart: unless-stopped
+    tty: true
+    ports:
+      - "80:80"
+      - "443:443"
     networks:
       - app-network
 
