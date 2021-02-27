@@ -45,8 +45,7 @@ RUN echo "LD_LIBRARY_PATH=\"/usr/local/instantclient\"" >> /etc/environment \
     && echo "ORACLE_HOME=\"/usr/local/instantclient\"" >> /etc/environment
 
 RUN ldconfig
-
-RUN docker-php-ext-enable opcache
+ENV LD_LIBRARY_PATH /usr/local/instantclient
 
 RUN pecl channel-update pecl.php.net
 
@@ -61,6 +60,8 @@ RUN pecl install --onlyreqdeps --nobuild oci8-2.2.0 \
 
 RUN docker-php-ext-configure pdo_oci --with-pdo-oci=instantclient,/usr/local/instantclient,12.2 \
         && docker-php-ext-install pdo_oci
+
+RUN docker-php-ext-enable opcache
 
 # install & enable memcached
 
