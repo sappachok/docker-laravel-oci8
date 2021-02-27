@@ -63,7 +63,7 @@ RUN docker-php-ext-configure pdo_oci --with-pdo-oci=instantclient,/usr/local/ins
 
 # install & enable memcached
 
-RUN pecl install memcached-3.1.5 && docker-php-ext-enable memcached
+# RUN pecl install memcached-3.1.5 && docker-php-ext-enable memcached
 
 # copy dev php.ini
 
