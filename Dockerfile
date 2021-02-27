@@ -32,7 +32,7 @@ RUN ln -s /usr/local/instantclient_12_2/libclntsh.so.12.1 /usr/local/instantclie
 RUN ln -s /usr/local/instantclient_12_2/libocci.so.12.1 /usr/local/instantclient/libocci.so
 RUN ln -s /usr/local/instantclient_12_2/sqlplus /usr/bin/sqlplus
 
-RUN sh -c echo '/usr/local/instantclient_12_2' > /etc/ld.so.conf.d/oracle-instantclient
+RUN sh -c echo '/usr/local/instantclient' > /etc/ld.so.conf.d/oracle-instantclient
 
 RUN ldconfig
 
