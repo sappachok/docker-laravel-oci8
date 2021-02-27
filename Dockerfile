@@ -41,7 +41,7 @@ RUN LD_LIBRARY_PATH=/usr/local/instantclient_12_2/ php
 
 RUN sh -c echo '/usr/local/instantclient_12_2' > /etc/ld.so.conf.d/oracle-instantclient
 
-RUN echo 'export ORACLE_HOME=/opt/oracle' >> /root/.bashrc
+RUN echo 'export ORACLE_HOME=/usr/local/oracle' >> /root/.bashrc
 RUN echo 'export LD_LIBRARY_PATH="/usr/local/instantclient"' >> /root/.bashrc
 RUN echo 'umask 002' >> /root/.bashrc
 
@@ -69,12 +69,6 @@ RUN docker-php-ext-configure pdo_oci --with-pdo-oci=instantclient,/usr/local/ins
 
 RUN mv "$PHP_INI_DIR/php.ini-development" "$PHP_INI_DIR/php.ini"
 
-# install composer
-
-RUN curl -sS https://getcomposer.org/installer | php -- \
-        --install-dir=/usr/local/bin \
-        --filename=composer
-
 RUN pecl install xdebug
 
 RUN rm -rf /var/lib/apt/lists/*
@@ -90,6 +84,12 @@ RUN php --ri oci8
 #RUN reboot
 
 #RUN curl -sS https://getcomposer.org/installer | php -- --install-dir=/usr/local/bin --filename=composer
+
+# install composer
+
+RUN curl -sS https://getcomposer.org/installer | php -- \
+        --install-dir=/usr/local/bin \
+        --filename=composer
 
 WORKDIR /var/www
 
