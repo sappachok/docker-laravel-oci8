@@ -45,16 +45,35 @@ RUN echo 'export ORACLE_HOME=/opt/oracle' >> /root/.bashrc
 RUN echo 'export LD_LIBRARY_PATH="/usr/local/instantclient"' >> /root/.bashrc
 RUN echo 'umask 002' >> /root/.bashrc
 
+RUN docker-php-ext-enable opcache
+
 RUN pecl channel-update pecl.php.net
 
-RUN echo 'instantclient,/usr/local/instantclient_12_2' | pecl install oci8-2.2.0
-RUN docker-php-ext-configure pdo_oci --with-pdo-oci=instantclient,/usr/local/instantclient
-RUN docker-php-ext-install pdo_oci
+RUN pecl install --onlyreqdeps --nobuild oci8-2.2.0 \
+        && cd "$(pecl config-get temp_dir)/oci8" \
+        && phpize \
+        && ./configure --with-oci8=instantclient,/usr/local/instantclient_12_2 \
+        && make && make install \
+        && docker-php-ext-enable oci8
 
-RUN docker-php-ext-configure oci8 --with-oci8=instantclient,/usr/local/instantclient && \
-    docker-php-ext-install oci8
+# install & enable pdo-oci
 
-RUN docker-php-ext-enable oci8
+RUN docker-php-ext-configure pdo_oci --with-pdo-oci=instantclient,/usr/local/instantclient_12_2,12.2 \
+        && docker-php-ext-install pdo_oci
+
+# install & enable memcached
+
+RUN pecl install memcached-3.1.5 && docker-php-ext-enable memcached
+
+# copy dev php.ini
+
+RUN mv "$PHP_INI_DIR/php.ini-development" "$PHP_INI_DIR/php.ini"
+
+# install composer
+
+RUN curl -sS https://getcomposer.org/installer | php -- \
+        --install-dir=/usr/local/bin \
+        --filename=composer
 
 RUN pecl install xdebug
 
@@ -69,7 +88,7 @@ RUN ldconfig -v
 RUN php --ri oci8
 #RUN reboot
 
-RUN curl -sS https://getcomposer.org/installer | php -- --install-dir=/usr/local/bin --filename=composer
+#RUN curl -sS https://getcomposer.org/installer | php -- --install-dir=/usr/local/bin --filename=composer
 
 WORKDIR /var/www
 
