@@ -41,6 +41,9 @@ RUN echo 'export ORACLE_HOME=/usr/local/instantclient' >> /root/.bashrc
 RUN echo 'export LD_LIBRARY_PATH="/usr/local/instantclient"' >> /root/.bashrc
 RUN echo 'umask 002' >> /root/.bashrc
 
+RUN echo "LD_LIBRARY_PATH=\"/usr/local/instantclient\"" >> /etc/environment \
+    && echo "ORACLE_HOME=\"/usr/local/instantclient\"" >> /etc/environment
+
 RUN ldconfig
 
 RUN docker-php-ext-enable opcache
