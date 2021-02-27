@@ -47,7 +47,7 @@ RUN echo 'umask 002' >> /root/.bashrc
 
 RUN pecl channel-update pecl.php.net
 
-RUN echo 'instantclient,/usr/local/instantclient_18_5' | pecl install oci8-2.2.0
+RUN echo 'instantclient,/usr/local/instantclient_18_5' | pecl install oci8
 #RUN docker-php-ext-configure pdo_oci --with-pdo-oci=instantclient,/usr/local/instantclient
 #RUN docker-php-ext-install pdo_oci
 
