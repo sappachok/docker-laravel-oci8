@@ -32,6 +32,16 @@ services:
       - ./nginx/conf.d/:/etc/nginx/conf.d/
     networks:
       - app-network
+   
+  #Oracle Database
+  oracledb:
+    image: dkfi/docker-oracle-xe-10g
+    container_name: oracledb
+    restart: unless-stopped
+    tty: true
+    ports:
+      - 49160:22
+      - 49161:1521
 
 #Docker Networks
 networks:
