@@ -9,10 +9,10 @@ services:
       - 8080:80
       - 8000:8000
       - 9000:9000
-    working_dir: /var/www/html
+    working_dir: /var/www
     volumes:
       #- c://xampp3/htdocs/laravel/laravel-ora:/var/www/html
-      - c://xampp3/htdocs/laravel/example-app:/var/www/html      
+      - c://xampp3/htdocs/laravel/example-app:/var/www
       #- ./php:/usr/local/etc/php
     restart: unless-stopped
     networks:
@@ -27,6 +27,9 @@ services:
     ports:
       - "80:80"
       - "443:443"
+    volumes:
+      - c://xampp3/htdocs/laravel/example-app:/var/www
+      - ./nginx/conf.d/:/etc/nginx/conf.d/
     networks:
       - app-network
 
