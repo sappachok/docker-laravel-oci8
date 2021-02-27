@@ -12,3 +12,14 @@ sid: xe
 username: system
 password: oracle
 ```
+
+## Password for SYS & SYSTEM
+
+    oracle
+
+## Login by SSH
+
+```yml
+ssh root@localhost -p 49160
+password: admin
+```
