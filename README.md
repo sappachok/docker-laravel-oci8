@@ -23,3 +23,14 @@ password: oracle
 ssh root@localhost -p 49160
 password: admin
 ```
+
+## Laravel ENV
+
+```yml
+DB_CONNECTION=oracle
+DB_HOST=oracledb
+DB_PORT=1521
+DB_DATABASE=xe
+DB_USERNAME=LARAVEL
+DB_PASSWORD=password
+```

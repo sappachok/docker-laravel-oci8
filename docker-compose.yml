@@ -13,6 +13,7 @@ services:
     volumes:
       #- c://xampp3/htdocs/laravel/laravel-ora:/var/www/html
       - c://xampp3/htdocs/laravel/example-app:/var/www
+      #- c://xampp3/htdocs/laravel/laravel-ora:/var/www
       #- ./php:/usr/local/etc/php
     restart: unless-stopped
     networks:
@@ -35,13 +36,16 @@ services:
    
   #Oracle Database
   oracledb:
-    image: dkfi/docker-oracle-xe-10g
+    image: epiclabs/docker-oracle-xe-11g
     container_name: oracledb
     restart: unless-stopped
     tty: true
     ports:
-      - 49160:22
-      - 49161:1521
+      - 15210:1521
+    #volumes:
+    #  - /var/yourdata:/u01/app/oracle
+    networks:
+      - app-network
 
 #Docker Networks
 networks:
