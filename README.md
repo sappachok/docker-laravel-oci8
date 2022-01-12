@@ -34,3 +34,9 @@ DB_DATABASE=xe
 DB_USERNAME=LARAVEL
 DB_PASSWORD=password
 ```
+
+## Install Laravel Admin
+
+```yml
+php artisan admin:install
+```
