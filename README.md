@@ -40,3 +40,10 @@ DB_PASSWORD=password
 ```yml
 php artisan admin:install
 ```
+
+## Admin Login
+
+```yml
+username: admin
+password: admin
+```
