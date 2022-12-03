@@ -1,4 +1,4 @@
-FROM php:fpm
+FROM php:8.0.5-fpm
 LABEL maintainer "Sappachok Singhasuwan <suppachok_sin@nstru.ac.th>"
 
 RUN apt-get update && apt-get upgrade -y && apt-get install -y \
