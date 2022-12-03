@@ -2,18 +2,19 @@ version: "3.7"
 services: 
   app:
     image: sappachok/docker-laravel-oci8
+    build: .
     container_name: 'laravelapp'
     tty: true
     #command:  php artisan serve --host=0.0.0.0 --port=9000
     ports:
-      - 8080:80
+      - 80:80
       - 8000:8000
       - 9000:9000
     working_dir: /var/www
     volumes:
       #- c://xampp3/htdocs/laravel/laravel-ora:/var/www/html
       #- c://xampp3/htdocs/laravel/example-app:/var/www
-      - c://xampp3/htdocs/laravel/laravel-ora:/var/www
+      - c://xampp3//htdocs//laravel//app:/var/www
       #- ./php:/usr/local/etc/php
     restart: unless-stopped
     networks:
@@ -29,7 +30,7 @@ services:
       - "80:80"
       - "443:443"
     volumes:
-      - c://xampp3/htdocs/laravel/example-app:/var/www
+      #- c://xampp3/htdocs/laravel/example-app:/var/www
       - ./nginx/conf.d/:/etc/nginx/conf.d/
     networks:
       - app-network
