@@ -3,50 +3,51 @@ services:
   app:
     image: sappachok/docker-laravel-oci8
     build: .
-    container_name: 'laravelapp'
-    tty: true
-    #command:  php artisan serve --host=0.0.0.0 --port=9000
-    ports:
-      - 80:80
-      - 8000:8000
-      - 9000:9000
+    #container_name: 'laravelapp'
+    #ports:
+      #- 8080:80
+      #- 8000:8000
+      #- 9000:9000
     working_dir: /var/www
     volumes:
-      #- c://xampp3/htdocs/laravel/laravel-ora:/var/www/html
-      #- c://xampp3/htdocs/laravel/example-app:/var/www
+      #- ./app:/var/www
       - c://xampp3//htdocs//laravel//app:/var/www
-      #- ./php:/usr/local/etc/php
+
     restart: unless-stopped
     networks:
       - app-network
 
   #Nginx Service
-  webserver:
+  nginx:
     image: nginx:alpine
-    container_name: webserver
+    #container_name: webserver
     restart: unless-stopped
     tty: true
     ports:
       - "80:80"
       - "443:443"
     volumes:
-      #- c://xampp3/htdocs/laravel/example-app:/var/www
+      - c://xampp3//htdocs//laravel//app:/var/www
       - ./nginx/conf.d/:/etc/nginx/conf.d/
+    links:
+      - app
+    depends_on:
+      - app
     networks:
       - app-network
    
   #Oracle Database
-  oracledb:
-    image: epiclabs/docker-oracle-xe-11g
-    container_name: oracledb
-    restart: unless-stopped
-    tty: true
-    ports:
-      - 15210:1521
+  #oracledb:
+    #image: epiclabs/docker-oracle-xe-11g
+    #container_name: oracledb
+    #restart: unless-stopped
+    #tty: true
+    #ports:
+      #- 15210:1521
     #volumes:
     #  - /var/yourdata:/u01/app/oracle
-    networks:
-      - app-network
+    #networks:
+      #- app-network
 
 #Docker Networks
 networks:

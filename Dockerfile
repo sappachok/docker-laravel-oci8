@@ -1,4 +1,4 @@
-FROM php:8.0.5-fpm
+FROM php:7.4-fpm
 LABEL maintainer "Sappachok Singhasuwan <suppachok_sin@nstru.ac.th>"
 
 RUN apt-get update && apt-get upgrade -y && apt-get install -y \
@@ -56,7 +56,7 @@ ENV LD_LIBRARY_PATH /usr/local/instantclient
 
 RUN pecl channel-update pecl.php.net
 
-RUN pecl install --onlyreqdeps --nobuild oci8 \
+RUN pecl install --onlyreqdeps --nobuild oci8-2.2.0 \
         && cd "$(pecl config-get temp_dir)/oci8" \
         && phpize \
         && ./configure --with-oci8=instantclient,/usr/local/instantclient \
@@ -86,8 +86,9 @@ RUN php -v
 
 RUN ldconfig -v
 
-RUN ldd /usr/local/lib/php/extensions/no-debug-non-zts-20200930/oci8.so
-#RUN ldd /usr/local/lib/php/extensions/no-debug-non-zts-20190902/oci8.so
+#RUN ldd /usr/local/lib/php/extensions/no-debug-non-zts-20210902/oci8.so
+#RUN ldd /usr/local/lib/php/extensions/no-debug-non-zts-20200930/oci8.so
+RUN ldd /usr/local/lib/php/extensions/no-debug-non-zts-20190902/oci8.so
 
 RUN ls /usr/local/instantclient
 RUN php --ri oci8
@@ -101,24 +102,36 @@ RUN curl -sS https://getcomposer.org/installer | php -- \
         --install-dir=/usr/local/bin \
         --filename=composer
 
+RUN a2enmod ssl
+RUN a2ensite default-ssl
+
+RUN a2enmod rewrite
+
 WORKDIR /var/www
 
+# Get latest Composer
+COPY --from=composer:latest /usr/bin/composer /usr/bin/composer
+
 # Add user for laravel application
-RUN groupadd -g 1000 www
-RUN useradd -u 1000 -ms /bin/bash -g www www
+#RUN groupadd -g 1000 www
+
+RUN useradd -G www-data,root -u 1000 -d /var/www www
+
+#RUN useradd -u 1000 -ms /bin/bash -g www www
 
 # Copy existing application directory contents
 #COPY . /var/www
 
 # Copy existing application directory permissions
 #COPY --chown=www:www . /var/www
+
+RUN mkdir -p /var/www/.composer
 RUN chown -R www:www /var/www
 
 # Change current user to www
 USER www
 
 EXPOSE 9000
-EXPOSE 8000
-EXPOSE 80
+#EXPOSE 8000
 
 CMD ["php-fpm"]
